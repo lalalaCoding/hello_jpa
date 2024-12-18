@@ -32,7 +32,6 @@ public class JpaMain {
                 System.out.println("member.name = " + member.getName());
             }
 
-
             //회원 수정
 //            Member findMember = em.find(Member.class, 1L);
 //            findMember.setName("HelloJPA");
