@@ -2,52 +2,45 @@ package hellojpa;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
-
 @Entity
 public class Member {
 
-    @Id //PK 매핑
+    @Id @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name = "MEMBER_ID")
     private Long id;
 
-    @Column(name = "name") //특정 컬럼명과 매핑
-    private String username;
+    @Column(name = "USERNAME")
+    private String name;
 
-    private Integer age;
+//    @Column(name = "TEAM_ID")
+//    private Long teamId;
 
-    @Enumerated(EnumType.STRING) // enum 타입
-    private RoleType roleType;
-
-    @Temporal(TemporalType.TIMESTAMP) // 날짜 타입
-    private Date createDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastModifiedDate;
-
-    private LocalDate testLocalDate;
-    private LocalDateTime testLocalDateTime;
+    @ManyToOne //Member(Many) : Team(One)
+    @JoinColumn(name = "TEAM_ID") //연관관계에서 조인할 컬럼
+    private Team team;
 
 
-    @Lob
-    private String description;
-
-    @Transient
-    private int temp;
-
-
-    public Member() {}
+    public Long getId() {
+        return id;
+    }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public String getName() {
+        return name;
     }
 
-    public void setRoleType(RoleType roleType) {
-        this.roleType = roleType;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }
