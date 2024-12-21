@@ -16,9 +16,8 @@ public class Member {
 //    private Long teamId;
 
     @ManyToOne //Member(Many) : Team(One)
-    @JoinColumn(name = "TEAM_ID") //연관관계에서 조인할 컬럼
+    @JoinColumn(name = "TEAM_ID") //연관관계에서 조인할 컬럼 -> TEAM_ID의 컬럼 값을 team.getTeamID()의 값으로 셋팅해줌
     private Team team;
-
 
     public Long getId() {
         return id;
@@ -36,11 +35,30 @@ public class Member {
         this.name = name;
     }
 
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
     public Team getTeam() {
         return team;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    /*
+        연관 관계 편의 메서드
+            이름은 setter보다는 별도의 이름을 사용하자.
+            주인 또는 주인이 아닌 쪽 중 반드시 한 곳에만 작성해야 한다.
+     */
+    public void changeTeam(Team team) {
+        this.team = team; //주인인 쪽에 값 설정
+        team.getMembers().add(this); //주인이 아닌 쪽에 값 설정
     }
+
+//    @Override
+//    public String toString() {
+//        return "Member{" +
+//                "id=" + id +
+//                ", name='" + name + '\'' +
+//                ", team=" + team +
+//                '}';
+//    }
 }
