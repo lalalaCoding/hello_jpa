@@ -2,6 +2,9 @@ package hellojpa;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class Member {
 
@@ -12,12 +15,17 @@ public class Member {
     @Column(name = "USERNAME")
     private String name;
 
-//    @Column(name = "TEAM_ID")
-//    private Long teamId;
-
     @ManyToOne //Member(Many) : Team(One)
     @JoinColumn(name = "TEAM_ID") //연관관계에서 조인할 컬럼 -> TEAM_ID의 컬럼 값을 team.getTeamID()의 값으로 셋팅해줌
     private Team team;
+
+    @OneToOne
+    @JoinColumn(name = "LOCKER_ID")
+    private Locker locker;
+
+    @OneToMany
+    @JoinTable(name = "member")
+    private List<MemberProduct> products = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -52,13 +60,4 @@ public class Member {
         this.team = team; //주인인 쪽에 값 설정
         team.getMembers().add(this); //주인이 아닌 쪽에 값 설정
     }
-
-//    @Override
-//    public String toString() {
-//        return "Member{" +
-//                "id=" + id +
-//                ", name='" + name + '\'' +
-//                ", team=" + team +
-//                '}';
-//    }
 }
