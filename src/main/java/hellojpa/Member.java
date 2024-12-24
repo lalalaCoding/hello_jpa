@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Member extends BaseEntity {
+public class Member {
 
     @Id @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "MEMBER_ID")
@@ -16,28 +16,60 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String name;
 
-    @ManyToOne //Member(Many) : Team(One)
+    @ManyToOne(fetch = FetchType.LAZY) //Member(Many) : Team(One)
     @JoinColumn(name = "TEAM_ID") //연관관계에서 조인할 컬럼 -> TEAM_ID의 컬럼 값을 team.getTeamID()의 값으로 셋팅해줌
     private Team team;
-
-    @OneToOne
-    @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;
 
     @OneToMany
     @JoinTable(name = "MEMBER_PRODUCT")
     private List<MemberProduct> products = new ArrayList<>();
 
+    //기간 Period
+    @Embedded
+    private Period workPeriod;
 
+    //주소 Address
+    @Embedded
+    private Address homeAddress;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name="city", column=@Column(name="WORK_CITY")),
+            @AttributeOverride(name="street", column=@Column(name="WORK_STREET")),
+            @AttributeOverride(name="zipcode", column=@Column(name="WORK_ZIPCODE"))
+    })
+    private Address workAddress;
 
-
-    public Long getId() {
-        return id;
+    public Address getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public Period getWorkPeriod() {
+        return workPeriod;
+    }
+
+    public void setWorkPeriod(Period workPeriod) {
+        this.workPeriod = workPeriod;
+    }
+
+    public List<MemberProduct> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<MemberProduct> products) {
+        this.products = products;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public String getName() {
@@ -48,21 +80,13 @@ public class Member extends BaseEntity {
         this.name = name;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public Long getId() {
+        return id;
     }
 
-    public Team getTeam() {
-        return team;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    /*
-        연관 관계 편의 메서드
-            이름은 setter보다는 별도의 이름을 사용하자.
-            주인 또는 주인이 아닌 쪽 중 반드시 한 곳에만 작성해야 한다.
-     */
-    public void changeTeam(Team team) {
-        this.team = team; //주인인 쪽에 값 설정
-        team.getMembers().add(this); //주인이 아닌 쪽에 값 설정
-    }
+
 }
