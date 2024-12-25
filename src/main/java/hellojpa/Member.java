@@ -2,9 +2,10 @@ package hellojpa;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Member {
@@ -32,13 +33,21 @@ public class Member {
     @Embedded
     private Address homeAddress;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name="city", column=@Column(name="WORK_CITY")),
-            @AttributeOverride(name="street", column=@Column(name="WORK_STREET")),
-            @AttributeOverride(name="zipcode", column=@Column(name="WORK_ZIPCODE"))
-    })
-    private Address workAddress;
+    @ElementCollection //컬렉션으로 구성된 값 타입 사용을 명시하는 어노테이션
+    @CollectionTable(name = "FAVORITE_FOOD", joinColumns = @JoinColumn(name = "MEMBER_ID")) //컬렉션을 저장할 테이블의 이름
+    @Column(name = "FOOD_NAME") //기본 값 타입을 저장하기 위한 컬럼명 지정
+    private Set<String> favoriteFoods = new HashSet<>();
+
+//    @ElementCollection
+//    @CollectionTable(name = "ADDRESS", joinColumns = @JoinColumn(name = "MEMBER_ID"))
+//    //임베디드 값 타입을 저장하기 위한 컬럼명은 임베디드 값 정의를 따른다.
+//    private List<Address> addressHistory = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEMBER_ID")
+    private List<AddressEntity> addressHistory = new ArrayList<>();
+
+
 
     public Address getHomeAddress() {
         return homeAddress;
@@ -88,5 +97,19 @@ public class Member {
         this.id = id;
     }
 
+    public Set<String> getFavoriteFoods() {
+        return favoriteFoods;
+    }
 
+    public void setFavoriteFoods(Set<String> favoriteFoods) {
+        this.favoriteFoods = favoriteFoods;
+    }
+
+    public List<AddressEntity> getAddressHistory() {
+        return addressHistory;
+    }
+
+    public void setAddressHistory(List<AddressEntity> addressHistory) {
+        this.addressHistory = addressHistory;
+    }
 }
